@@ -28,60 +28,74 @@ app.get('/api/hello', function(req, res) {
 // al url original
 app.post('/api/shorturl/',(req,res) =>{
   const client = new Client(); 
-  // const url = new URL(req.body.url);
-  // if(url) {
-  //   const db = new Database();
-  //   db.get(req.body.url).then(value => {
-  //     // console.log(value); 
-  //     if(value != null) {
+  const url = new URL(req.body.url);
+  if(url) {
+    // db.get(req.body.url).then(value => {
+      // console.log(value); 
+      // if(value != null) {
         
-  //       res.json({original_url : req.body.url, short_url : value});
-  //     }else {
-  //       const urlId = Math.floor(Math.random() * 100);
-  //       db.set(req.body.url,urlId)
-  //         .then(() => {
-  //           // console.log('entra');
-  //           res.json({original_url : req.body.url, short_url : urlId});    
-  //         });
-  //     }
-  //   });
+        // res.json({original_url : req.body.url, short_url : value});
+        // }else {
+    
+        (async () => {
+          const urlId = Math.floor(Math.random() * 100);
+          client.set(urlId,req.body.url) 
+            .then(() => { //Validar q siempre se ejecute el then asi no se registre el valor.
+              res.json({original_url : req.body.url, short_url : urlId});    
+            });
+        });
+  
+    // }
+    // });
 
-  ( async () => {
-      const urlId = Math.floor(Math.random() * 100);
-      // await client.set(req.body.url, urlId).then(() => {});
-      await client.set('1', urlId).then(() => {});
-    }
-  )();
+  // (async () => {
+  //     const urlId = Math.floor(Math.random() * 100);
+  //     await client.set('3', urlId).then(() => {});
+  //   }
+  // )();
 
-  (async ()=> {
-      await client.get('1').then((value)=>{});
-    }
+  // (async ()=> {
+  //     await client.get('3').then((value)=>{
+  //       console.log(value);
+  //     });
+  //   }
    
-  )();
+  // )();
   
-  ( async () => {
-      await client.delete('1').then(() => {});
-    }
-  )();
+  // ( async () => {
+  //     await client.delete(94).then(() => {});
+  //   }
+  // )();
   
-  (async ()=> {
-      await client.list().then((keys)=>{
-        console.log(keys);
-      });
-    }
-  )(); 
+  // (async ()=> {
+  //     await client.list().then((keys)=>{
+  //       keys.forEach((e) => {
+  //         client.get(e).then((value)=>{console.log(value)});
+          
+  //       });
+  //       // for(let e of keys) {
+  //       //    client.delete(e).then(()=>{});
+  //       // };
+  //     });
+  //   }
+  // )(); 
   
-  // }else{ // TypeError [ERR_INVALID_URL]: Invalid URL: mario
-  //   res.json({error : 'invalid url'});
-  // }
+  }else{ // TypeError [ERR_INVALID_URL]: Invalid URL: mario
+    res.json({error : 'invalid url'});
+  }
 });
 
 // Buscar en el hash y realizar el redirec
 app.use('/api/shorturl/:short_url',(req,res)=>{
-  // res.redirect("http://www.node.org");
-  
-  // console.log(req.body.url); 
-  console.log(req.params.short_url); 
+  const client = new Client(); 
+  (async () => {
+      client.get(req.params.short_url).then((value) => {
+        res.redirect(value);      
+      });
+    }
+    
+  )();
+
 });
 
 app.listen(port, function() {
