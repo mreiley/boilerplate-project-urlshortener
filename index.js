@@ -4,7 +4,7 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 // const dns = require('dns');
-const Database = require("@replit/database");
+const Client = require("@replit/database");
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
@@ -27,7 +27,7 @@ app.get('/api/hello', function(req, res) {
 // validar el url, creamos el short_url el cual enviams en un json junto
 // al url original
 app.post('/api/shorturl/',(req,res) =>{
-  
+  const client = new Client(); 
   // const url = new URL(req.body.url);
   // if(url) {
   //   const db = new Database();
@@ -46,19 +46,30 @@ app.post('/api/shorturl/',(req,res) =>{
   //     }
   //   });
 
+  ( async () => {
+      const urlId = Math.floor(Math.random() * 100);
+      // await client.set(req.body.url, urlId).then(() => {});
+      await client.set('1', urlId).then(() => {});
+    }
+  )();
 
-      // const db = new Database();
-      // db.list().then(keys => {
-        // console.log(keys);
-      //   // keys.forEach((k) => {
-      //   //   console.log(keys[k]);
-      //   // })
-      // });
-
-      // db.empty();
-       
-     const db = new Database();
-     db.delete(req.body.url).then(() => {console.log('borrado')});
+  (async ()=> {
+      await client.get('1').then((value)=>{});
+    }
+   
+  )();
+  
+  ( async () => {
+      await client.delete('1').then(() => {});
+    }
+  )();
+  
+  (async ()=> {
+      await client.list().then((keys)=>{
+        console.log(keys);
+      });
+    }
+  )(); 
   
   // }else{ // TypeError [ERR_INVALID_URL]: Invalid URL: mario
   //   res.json({error : 'invalid url'});
